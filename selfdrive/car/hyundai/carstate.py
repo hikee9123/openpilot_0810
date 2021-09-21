@@ -477,8 +477,8 @@ class CarState(CarStateBase):
         ("FCA_CmdAct", "FCA11", 0),
         ("CF_VSM_Warn", "FCA11", 0),
       ]
-      if not CP.openpilotLongitudinalControl:
-        checks += [("FCA11", 50)]
+      #if not CP.openpilotLongitudinalControl:
+      checks += [("FCA11", 50)]
     else:
       signals += [
         ("AEB_CmdAct", "SCC12", 0),
