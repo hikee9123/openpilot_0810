@@ -307,7 +307,6 @@ class CarState(CarStateBase):
     self.lkas_button_on = cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"]
     self.is_highway = self.lfahda["HDA_Icon_State"] != 0.
 
-    self.Elect_Gear_Step = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"]
     self.SpeedLim_Nav_Clu = cp.vl["Navi_HU"]["SpeedLim_Nav_Clu"]
 
     return ret
@@ -462,7 +461,6 @@ class CarState(CarStateBase):
       ]
     elif CP.carFingerprint in FEATURES["use_elect_gears"]:
       signals += [("Elect_Gear_Shifter", "ELECT_GEAR", 0)]
-      signals += [("Elect_Gear_Step", "ELECT_GEAR", 0)]
       checks += [("ELECT_GEAR", 20)]
     else:
       signals += [
