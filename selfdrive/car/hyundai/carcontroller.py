@@ -155,6 +155,8 @@ class CarController():
     str_log1 = 'MODE={:.0f} GAP={:.0f} HW={:.0f}'.format( CS.cruise_set_mode, CS.out.cruiseState.gapSet, CS.is_highway )
     trace1.printf3( '{}'.format( str_log1 ) )
 
+    if sys_warning and CS.clu_Vanz < 30:
+      sys_warning = False
 
     if frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
