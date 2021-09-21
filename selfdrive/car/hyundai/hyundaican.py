@@ -42,6 +42,8 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
     values["CF_Lkas_LdwsActivemode"] = 2
   elif car_fingerprint == CAR.KIA_OPTIMA:
     values["CF_Lkas_LdwsActivemode"] = 0
+  elif car_fingerprint in [CAR.GRANDEUR_HEV_19]:
+    values["CF_Lkas_SysWarning"] = 4 if sys_warning else 0    
 
   dat = packer.make_can_msg("LKAS11", 0, values)[2]
 
