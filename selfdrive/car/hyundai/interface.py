@@ -33,7 +33,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.startAccel = 1.0
 
-    if candidate == CAR.GRANDEUR_HEV_19:
+    if candidate in [CAR.GRANDEUR_HEV_19, CAR.GRANDEUR_HEV_20]:
       ret.mass = 1675. + STD_CARGO_KG
       ret.wheelbase = 2.845
       ret.steerRatio = 16.5  #13.96   #12.5
