@@ -270,7 +270,7 @@ class CarInterface(CarInterfaceBase):
                      CAR.GRANDEUR_HEV_19]:
       ret.safetyModel = car.CarParams.SafetyModel.hyundaiLegacy
 
-      #ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
+      ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
     
     # set appropriate safety param for gas signal
     if candidate in HYBRID_CAR:

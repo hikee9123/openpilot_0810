@@ -70,6 +70,7 @@ def read_thermal(thermal_config):
   dat.deviceState.memoryTempC = read_tz(thermal_config.mem[0]) / thermal_config.mem[1]
   dat.deviceState.ambientTempC = read_tz(thermal_config.ambient[0]) / thermal_config.ambient[1]
   dat.deviceState.batteryTempCDEPRECATED = read_tz(thermal_config.bat[0]) / thermal_config.bat[1]
+  dat.deviceState.modemTempC = HARDWARE.get_modem_temperatures()
   return dat
 
 
@@ -178,6 +179,7 @@ def thermald_thread():
   network_info = None
   modem_version = None
   registered_count = 0
+  nvme_temps = None
   wifiIpAddress = 'N/A'
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
@@ -267,12 +269,13 @@ def thermald_thread():
       elif startup_conditions["ignition"] == True:
         startup_conditions["ignition"] = False
 
-    # get_network_type is an expensive call. update every 10s
+    # these are expensive calls. update every 10s
     if (count % int(10. / DT_TRML)) == 0:
       try:
         network_type = HARDWARE.get_network_type()
         network_strength = HARDWARE.get_network_strength(network_type)
         network_info = HARDWARE.get_network_info()  # pylint: disable=assignment-from-none
+        nvme_temps = HARDWARE.get_nvme_temps()
         wifiIpAddress = HARDWARE.get_ip_address()
 
         # Log modem version once
@@ -303,6 +306,8 @@ def thermald_thread():
     msg.deviceState.networkStrength = network_strength
     if network_info is not None:
       msg.deviceState.networkInfo = network_info
+    if nvme_temps is not None:
+      msg.deviceState.nvmeTempC = nvme_temps
 
     msg.deviceState.wifiIpAddress = wifiIpAddress
     msg.deviceState.batteryPercent = HARDWARE.get_battery_capacity()
@@ -386,7 +391,7 @@ def thermald_thread():
     startup_conditions["accepted_terms"] = params.get("HasAcceptedTerms") == terms_version
 
     panda_signature = params.get("PandaFirmware")
-    startup_conditions["fw_version_match"] = True #(panda_signature is None) or (panda_signature == FW_SIGNATURE)   # don't show alert is no panda is connected (None)
+    startup_conditions["fw_version_match"] = (panda_signature is None) or (panda_signature == FW_SIGNATURE)   # don't show alert is no panda is connected (None)
     set_offroad_alert_if_changed("Offroad_PandaFirmwareMismatch", (not startup_conditions["fw_version_match"]))
 
     # with 2% left, we killall, otherwise the phone will take a long time to boot
