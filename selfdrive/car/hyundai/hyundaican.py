@@ -16,6 +16,13 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   values["CF_Lkas_ActToi"] = steer_req
   values["CF_Lkas_MsgCount"] = frame % 0x10
 
+  if car_fingerprint in [CAR.GRANDEUR_HEV_19]:
+    nSysWarnVal = 9
+    if steer_req:
+      nSysWarnVal = 4
+ 
+    values["CF_Lkas_SysWarning"] = nSysWarnVal if sys_warning else 0
+
   if car_fingerprint in [CAR.SONATA, CAR.PALISADE, CAR.KIA_NIRO_EV, CAR.KIA_NIRO_HEV_2021, CAR.SANTA_FE,
                          CAR.IONIQ_EV_2020, CAR.IONIQ_PHEV, CAR.KIA_SELTOS, CAR.ELANTRA_2021,
                          CAR.ELANTRA_HEV_2021, CAR.SONATA_HYBRID, CAR.KONA_EV, CAR.KONA_HEV, CAR.SANTA_FE_2022, CAR.KIA_K5_2021]:
@@ -75,6 +82,32 @@ def create_lfahda_mfc(packer, enabled, hda_set_speed=0):
     "HDA_Icon_State": 2 if hda_set_speed else 0,
     "HDA_VSetReq": hda_set_speed,
   }
+  return packer.make_can_msg("LFAHDA_MFC", 0, values)
+
+
+def create_hda_mfc(packer, CS, c ):
+  values = CS.lfahda
+  enabled = c.enabled
+
+  if CS.cruise_set_mode == 0:
+    ldwSysState = 0
+    if c.hudControl.leftLaneVisible :
+      ldwSysState += 1
+    if c.hudControl.rightLaneVisible:
+      ldwSysState += 2
+
+    if CS.acc_mode:
+      hda_icon_state = 2
+    elif enabled:
+      hda_icon_state = 1
+    else:
+      hda_icon_state = 0
+
+    #values["HDA_Icon_Wheel"] = 1 if enabled else 0
+    values["HDA_Icon_State"] = hda_icon_state
+    values["HDA_LdwSysState"] = ldwSysState
+
+  values["HDA_Icon_Wheel"] = 1 if enabled else 0
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
 def create_acc_commands(packer, enabled, accel, jerk, idx, lead_visible, set_speed, stopping):
