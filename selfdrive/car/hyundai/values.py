@@ -12,7 +12,8 @@ class CarControllerParams:
   def __init__(self, CP):
     if CP.carFingerprint in [CAR.SONATA, CAR.PALISADE, CAR.SANTA_FE, CAR.VELOSTER, CAR.GENESIS_G70,
                              CAR.IONIQ_EV_2020, CAR.KIA_CEED, CAR.KIA_SELTOS, CAR.ELANTRA_2021,
-                             CAR.ELANTRA_HEV_2021, CAR.SONATA_HYBRID, CAR.KONA_HEV, CAR.SANTA_FE_2022, CAR.KIA_K5_2021, CAR.KONA_EV, CAR.KONA, CAR.GRANDEUR_HEV_19]:
+                             CAR.ELANTRA_HEV_2021, CAR.SONATA_HYBRID, CAR.KONA_HEV, CAR.SANTA_FE_2022, CAR.KIA_K5_2021, CAR.KONA_EV, CAR.KONA,
+                             CAR.GRANDEUR_HEV_19]:
       self.STEER_MAX = 384
     else:
       self.STEER_MAX = 255
@@ -830,7 +831,7 @@ FEATURES = {
   "send_hda_mfa": set([CAR.GRANDEUR_HEV_19]),
 }
 
-HYBRID_CAR = set([CAR.IONIQ_PHEV, CAR.ELANTRA_HEV_2021, CAR.KIA_NIRO_HEV, CAR.KIA_NIRO_HEV_2021, CAR.SONATA_HYBRID, CAR.KONA_HEV])  # these cars use a different gas signal
+HYBRID_CAR = set([CAR.GRANDEUR_HEV_19,CAR.IONIQ_PHEV, CAR.ELANTRA_HEV_2021, CAR.KIA_NIRO_HEV, CAR.KIA_NIRO_HEV_2021, CAR.SONATA_HYBRID, CAR.KONA_HEV])  # these cars use a different gas signal
 EV_CAR = set([CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_NIRO_EV])
 
 # If 0x500 is present on bus 1 it probably has a Mando radar outputting radar points.
