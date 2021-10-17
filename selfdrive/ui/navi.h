@@ -210,7 +210,6 @@ static void ui_draw_navi(UIState *s)
 
   nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   nvgFontSize(s->vg, 48);
-
   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
 
   int xpos = 250;
