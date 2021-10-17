@@ -243,15 +243,12 @@ static void ui_draw_navi(UIState *s)
   int nGap = 50;
 
   nvgTextAlign( s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  ui_print1(s, xpos, ypos, "SLV:","%d", SpeedLimitValid  );  ypos += nGap;
-  ui_print1(s, xpos, ypos, "SL:","%.1f", SpeedLimit  );      ypos += nGap; ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLV:","%d, %.1f", SpeedLimitValid, SpeedLimit  );  ypos += nGap; ypos += nGap;
   
-  ui_print1(s, xpos, ypos, "SLAV:","%d", SpeedLimitAheadValid  );  ypos += nGap;
-  ui_print1(s, xpos, ypos, "SLA:","%.1f", SpeedLimitAhead  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLAV:","%d, %.1f", SpeedLimitAheadValid, SpeedLimitAhead  );  ypos += nGap;
   ui_print1(s, xpos, ypos, "SLAD:","%.1f", SpeedLimitAheadDistance  );  ypos += nGap; ypos += nGap;
 
-  ui_print1(s, xpos, ypos, "TSLV:","%d", TurnSpeedLimitValid  );  ypos += nGap;
-  ui_print1(s, xpos, ypos, "TSL:","%.1f", TurnSpeedLimit  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "TSLV:","%d, %.1f", TurnSpeedLimitValid, TurnSpeedLimit  );  ypos += nGap;
   ui_print1(s, xpos, ypos, "TSLED:","%.1f", TurnSpeedLimitEndDistance  );  ypos += nGap;
   ui_print1(s, xpos, ypos, "TSLS:","%d", TurnSpeedLimitSign  );  ypos += nGap;
 
