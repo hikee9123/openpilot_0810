@@ -216,11 +216,12 @@ static void ui_draw_navi(UIState *s)
   int ypos = 200;
   int nGap = 50;
 
-  ui_print(s, xpos, ypos, "SKV:%d", SpeedLimitValid  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "SL:%.1f", SpeedLimit  );      ypos += nGap;
+  ui_print(s, xpos, ypos, "SLV:%d", SpeedLimitValid  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "SL:%.1f", SpeedLimit  );      ypos += nGap; ypos += nGap;
+  
   ui_print(s, xpos, ypos, "SLAV:%d", SpeedLimitAheadValid  );  ypos += nGap;
   ui_print(s, xpos, ypos, "SLA:%.1f", SpeedLimitAhead  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "SLAD:%.1f", SpeedLimitAheadDistance  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "SLAD:%.1f", SpeedLimitAheadDistance  );  ypos += nGap; ypos += nGap;
 
   ui_print(s, xpos, ypos, "TSLV:%d", TurnSpeedLimitValid  );  ypos += nGap;
   ui_print(s, xpos, ypos, "TSL:%.1f", TurnSpeedLimit  );  ypos += nGap;
