@@ -20,13 +20,15 @@ class CarInterface(CarInterfaceBase):
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
     ret.carName = "hyundai"
-    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundai, 0)]
-    #ret.safetyModel = car.CarParams.SafetyModel.hyundai
-    ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1]
-    #ret.radarOffCan = False
+    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy, 0)]
+    #ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1]
+    ret.radarOffCan = False
+
+    ret.openpilotLongitudinalControl = Params().get_bool("DisableRadar") and candidate in [CAR.SONATA, CAR.SONATA_HYBRID, CAR.PALISADE, CAR.SANTA_FE]
+    ret.pcmCruise = not ret.openpilotLongitudinalControl
 
     # Most Hyundai car ports are community features for now
-    #ret.communityFeature = candidate not in [CAR.SONATA, CAR.PALISADE]
+    ret.communityFeature = candidate not in [CAR.SONATA, CAR.PALISADE]
 
     ret.steerActuatorDelay = 0.1  # Default delay
     ret.steerRateCost = 0.5
@@ -40,6 +42,8 @@ class CarInterface(CarInterfaceBase):
     ret.longitudinalTuning.kiV = [0.0]
     ret.stopAccel = 0.0
     ret.startAccel = 0.0
+
+    ret.longitudinalActuatorDelayUpperBound = 1.0 # s
 
     if candidate in [CAR.GRANDEUR_HEV_19]:
       ret.mass = 1675. + STD_CARGO_KG
@@ -56,9 +60,9 @@ class CarInterface(CarInterfaceBase):
 
       
       ret.lateralTuning.init('lqr')
-      ret.lateralTuning.lqr.scale = 1700     #1700.0
-      ret.lateralTuning.lqr.ki = 0.01       #0.01
-      ret.lateralTuning.lqr.dcGain = 0.00289  #0.00285   # 0.002237852961363602
+      ret.lateralTuning.lqr.scale = 1500     #1700.0
+      ret.lateralTuning.lqr.ki = 0.015       #0.01
+      ret.lateralTuning.lqr.dcGain = 0.0027  #0.00285   # 0.002237852961363602
       # 호야  1500, 0.015, 0.0027
       #  1700, 0.01, 0.0029
       #  2000, 0.01, 0.003
