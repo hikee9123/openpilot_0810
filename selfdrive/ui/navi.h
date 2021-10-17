@@ -196,31 +196,51 @@ static void ui_draw_navi(UIState *s)
   UIScene &scene = s->scene;
 
 
- 
+  int   SpeedLimitValid = scene.liveOpenMapData.getSpeedLimitValid();
+  float SpeedLimit = scene.liveOpenMapData.getSpeedLimit();
+  int   SpeedLimitAheadValid = scene.liveOpenMapData.getSpeedLimitAheadValid();
+  float SpeedLimitAhead = scene.liveOpenMapData.getSpeedLimitAhead();
+  float SpeedLimitAheadDistance =  scene.liveOpenMapData.getSpeedLimitAheadDistance();
+
+  int   TurnSpeedLimitValid = scene.liveOpenMapData.getTurnSpeedLimitValid();
+  float  TurnSpeedLimit = scene.liveOpenMapData.getTurnSpeedLimit();
+  float  TurnSpeedLimitEndDistance = scene.liveOpenMapData.getTurnSpeedLimitEndDistance();
+  int    TurnSpeedLimitSign =  scene.liveOpenMapData.getTurnSpeedLimitSign();
+
+
+  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+  nvgFontSize(s->vg, 48);
+
+  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+
+  int xpos = 250;
+  int ypos = 200;
+  int nGap = 50;
+
+  ui_print(s, xpos, ypos, "SKV:%d", SpeedLimitValid  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "SL:%.1f", SpeedLimit  );      ypos += nGap;
+  ui_print(s, xpos, ypos, "SLAV:%d", SpeedLimitAheadValid  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "SLA:%.1f", SpeedLimitAhead  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "SLAD:%.1f", SpeedLimitAheadDistance  );  ypos += nGap;
+
+  ui_print(s, xpos, ypos, "TSLV:%d", TurnSpeedLimitValid  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "TSL:%.1f", TurnSpeedLimit  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "TSLED:%.1f", TurnSpeedLimitEndDistance  );  ypos += nGap;
+  ui_print(s, xpos, ypos, "TSLS:%d", TurnSpeedLimitSign  );  ypos += nGap;
+
+
+
+  // live Navi Data
   float speedLimit =  scene.liveNaviData.getSpeedLimit();  
   float speedLimitAheadDistance =  scene.liveNaviData.getArrivalDistance(); // getSpeedLimitDistance();  
   float map_sign = scene.liveNaviData.getSafetySign();
   int   mapValid = scene.liveNaviData.getMapValid();
 
-
-   //float dSec = scene.liveNaviData.getArrivalSec();
-  // float dDistance = scene.liveNaviData.getArrivalDistance();
-
   //  printf("ui_draw_navi %d  %.1f  %d \n", mapValid, speedLimit, opkrturninfo);
   if( mapValid )
   {
     ui_draw_traffic_sign( s, map_sign, speedLimit, speedLimitAheadDistance );
-
-    //nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-    //nvgFontSize(s->vg, 48);
-    //int xpos = 250;
-    //int ypos = 300;
-    //nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
-    //ui_print(s, xpos, ypos, "AT:%.1f", dSec  );
-    //ui_print(s, xpos, ypos + 50, "AD:%.1f", dDistance  );
   }
-    
-  
 }
 
 static void ui_draw_debug1(UIState *s) 

@@ -124,6 +124,7 @@ typedef struct UIScene {
   cereal::GpsLocationData::Reader gpsLocationExternal;
   cereal::DeviceState::Reader deviceState;
   cereal::LiveNaviData::Reader liveNaviData;
+  cereal::LiveOpenMapData::Reader liveOpenMapData;
   cereal::ControlsState::Reader controls_state;
   cereal::CarState::Reader car_state;
   cereal::LateralPlan::Reader lateralPlan;

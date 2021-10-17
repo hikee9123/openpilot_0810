@@ -221,6 +221,11 @@ static void update_state(UIState *s) {
      scene.scr.map_is_running = scene.liveNaviData.getMapEnable();
    } 
 
+   if( sm.updated("liveOpenMapData"))
+   {
+     scene.liveOpenMapData = sm["liveOpenMapData"].getLiveOpenMapData();
+   } 
+
    if( sm.updated("liveParameters") )
    {
       scene.liveParameters = sm["liveParameters"].getLiveParameters();
@@ -274,7 +279,7 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "deviceState", "roadCameraState",
     "pandaStates", "carParams", "driverMonitoringState", "sensorEvents", "carState", "liveLocationKalman",
-    "liveNaviData", "gpsLocationExternal","radarState","lateralPlan", "liveParameters",
+    "liveNaviData", "liveOpenMapData", "gpsLocationExternal","radarState","lateralPlan", "liveParameters",
   });
 
   ui_state.wide_camera = Hardware::TICI() ? Params().getBool("EnableWideCamera") : false;
