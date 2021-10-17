@@ -47,7 +47,8 @@ static float interp( float xv, float xp[], float fp[], int N)
 	return  dResult;
 }
 
-static void ui_text(const UIState *s, float x, float y, const char *string, float size, NVGcolor color, const char *font_name) {
+static void ui_text(const UIState *s, float x, float y, const char *string, float size, NVGcolor color, const char *font_name = NULL ) 
+{
 
   if( font_name )
   {
@@ -79,19 +80,19 @@ static void ui_print1(UIState *s, int x, int y,  const char* string, const char*
   vasprintf( &msg_buf, fmt, args);
   va_end(args);
 
+
   NVGcolor color = nvgRGBA(127, 127, 127, 255);
-  nvgFillColor(s->vg, color);
-  nvgText(s->vg, x, y, string, NULL);
+  ui_text( s, x, y, string, 48, color );
 
   int len = strlen(string);
-  color = nvgRGBA(200, 200, 200, 200);
+  color = nvgRGBA(180, 180, 180, 255);
   float fdata = atof(msg_buf);
 
   if( fdata > 0 )
      color = nvgRGBA(255, 255, 255, 255);
 
-  nvgFillColor(s->vg, color);
-  nvgText(s->vg, x + len*50, y, msg_buf, NULL);
+  x += len * 20;
+  ui_text( s, x, y, msg_buf, 48, color );
 }
 
 static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  float speedLimitAheadDistance ) 
@@ -230,9 +231,7 @@ static void ui_draw_navi(UIState *s)
   int    TurnSpeedLimitSign =  scene.liveOpenMapData.getTurnSpeedLimitSign();
 
 
-  nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  nvgFontSize(s->vg, 48);
-  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+
 
   int xpos = 250;
   int ypos = 300;
