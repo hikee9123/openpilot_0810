@@ -82,7 +82,7 @@ static void ui_print1(UIState *s, int x, int y,  const char* string, const char*
 
 
   NVGcolor color = nvgRGBA(127, 127, 127, 255);
-  ui_text( s, x, y, string, 48, color );
+  ui_text( s, x, y, string, 30, color );
 
   int len = strlen(string);
   color = nvgRGBA(180, 180, 180, 255);
@@ -237,6 +237,7 @@ static void ui_draw_navi(UIState *s)
   int ypos = 300;
   int nGap = 50;
 
+  nvgTextAlign( s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
   ui_print1(s, xpos, ypos, "SLV:","%d", SpeedLimitValid  );  ypos += nGap;
   ui_print1(s, xpos, ypos, "SL:","%.1f", SpeedLimit  );      ypos += nGap; ypos += nGap;
   
