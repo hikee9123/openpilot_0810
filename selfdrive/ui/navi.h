@@ -82,7 +82,7 @@ static void ui_print1(UIState *s, int x, int y,  const char* string, const char*
 
 
   NVGcolor color = nvgRGBA(127, 127, 127, 255);
-  ui_text( s, x, y, string, 25, color );
+  ui_text( s, x, y, string, 30, color );
 
   int len = strlen(string);
   color = nvgRGBA(180, 180, 180, 255);
