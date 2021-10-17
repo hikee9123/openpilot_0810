@@ -19,7 +19,15 @@
 
 // 일부 코드 OPKR 참고.
 
-
+void CUserPanel::refreshsystem()
+{
+    std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/apk/apk.py");
+    std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitcommit.sh");
+    std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/panda_flashing.sh");
+    std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull.sh");
+    std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull_cancel.sh");
+    std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/run_mixplorer.sh");
+}
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
 {
@@ -35,6 +43,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     const char* gitpull = "/data/openpilot/selfdrive/assets/addon/sh/gitpull.sh";
 
 
+  
     std::system( gitcommit );
     std::system("date '+%F %T' > /data/params/d/LastUpdateTime");
     QString desc = "";
@@ -50,7 +59,9 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
     if (ConfirmationDialog::confirm(desc, this)) {
       Params().putBool("PutPrebuiltOn", 0);
       std::system( "cd /data/openpilot; rm -f prebuilt" );
+      
       std::system( gitpull );
+      refreshsystem();
     }
 
 
@@ -171,12 +182,7 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
   { 
           if (ConfirmationDialog::confirm("Are you sure you want to exec(apk.py)?", this)) 
           {
-            std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/apk/apk.py");
-            std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitcommit.sh");
-            std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/panda_flashing.sh");
-            std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull.sh");
-            std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull_cancel.sh");
-            std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/run_mixplorer.sh");
+            refreshsystem();
             std::system("python /data/openpilot/selfdrive/assets/addon/apk/apk.py");
           }
   });
