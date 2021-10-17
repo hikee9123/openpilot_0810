@@ -196,30 +196,30 @@ class MapD():
     horizon_mts = self.gps_speed * LOOK_AHEAD_HORIZON_TIME
     next_turn_speed_limit_sections = self.route.next_curvature_speed_limit_sections(horizon_mts)
 
-    map_data_msg = messaging.new_message('liveMapData')
+    map_data_msg = messaging.new_message('liveOpenMapData')
     map_data_msg.valid = sm.all_alive_and_valid(service_list=['gpsLocationExternal'])
 
-    map_data_msg.liveMapData.lastGpsTimestamp = self.last_gps.timestamp
-    map_data_msg.liveMapData.speedLimitValid = bool(speed_limit is not None)
-    map_data_msg.liveMapData.speedLimit = float(speed_limit*3.6 if speed_limit is not None else 0.0)
-    map_data_msg.liveMapData.speedLimitAheadValid = bool(next_speed_limit_section is not None)
-    map_data_msg.liveMapData.speedLimitAhead = float(next_speed_limit_section.value*3.6
+    map_data_msg.liveOpenMapData.lastGpsTimestamp = self.last_gps.timestamp
+    map_data_msg.liveOpenMapData.speedLimitValid = bool(speed_limit is not None)
+    map_data_msg.liveOpenMapData.speedLimit = float(speed_limit*3.6 if speed_limit is not None else 0.0)
+    map_data_msg.liveOpenMapData.speedLimitAheadValid = bool(next_speed_limit_section is not None)
+    map_data_msg.liveOpenMapData.speedLimitAhead = float(next_speed_limit_section.value*3.6
                                                      if next_speed_limit_section is not None else 0.0)
-    map_data_msg.liveMapData.speedLimitAheadDistance = float(next_speed_limit_section.start
+    map_data_msg.liveOpenMapData.speedLimitAheadDistance = float(next_speed_limit_section.start
                                                              if next_speed_limit_section is not None else 0.0)
 
-    map_data_msg.liveMapData.turnSpeedLimitValid = bool(turn_speed_limit_section is not None)
-    map_data_msg.liveMapData.turnSpeedLimit = float(turn_speed_limit_section.value*3.6
+    map_data_msg.liveOpenMapData.turnSpeedLimitValid = bool(turn_speed_limit_section is not None)
+    map_data_msg.liveOpenMapData.turnSpeedLimit = float(turn_speed_limit_section.value*3.6
                                                     if turn_speed_limit_section is not None else 0.0)
-    map_data_msg.liveMapData.turnSpeedLimitSign = int(turn_speed_limit_section.curv_sign
+    map_data_msg.liveOpenMapData.turnSpeedLimitSign = int(turn_speed_limit_section.curv_sign
                                                       if turn_speed_limit_section is not None else 0)
-    map_data_msg.liveMapData.turnSpeedLimitEndDistance = float(turn_speed_limit_section.end
+    map_data_msg.liveOpenMapData.turnSpeedLimitEndDistance = float(turn_speed_limit_section.end
                                                                if turn_speed_limit_section is not None else 0.0)
-    map_data_msg.liveMapData.turnSpeedLimitsAhead = [float(s.value) for s in next_turn_speed_limit_sections]
-    map_data_msg.liveMapData.turnSpeedLimitsAheadDistances = [float(s.start) for s in next_turn_speed_limit_sections]
-    map_data_msg.liveMapData.turnSpeedLimitsAheadSigns = [float(s.curv_sign) for s in next_turn_speed_limit_sections]
+    map_data_msg.liveOpenMapData.turnSpeedLimitsAhead = [float(s.value) for s in next_turn_speed_limit_sections]
+    map_data_msg.liveOpenMapData.turnSpeedLimitsAheadDistances = [float(s.start) for s in next_turn_speed_limit_sections]
+    map_data_msg.liveOpenMapData.turnSpeedLimitsAheadSigns = [float(s.curv_sign) for s in next_turn_speed_limit_sections]
 
-    pm.send('liveMapData', map_data_msg)
+    pm.send('liveOpenMapData', map_data_msg)
     _debug(f'Mapd *****: Publish: \n{map_data_msg}\n********')
 
 
@@ -232,7 +232,7 @@ def mapd_thread(sm=None, pm=None):
   if sm is None:
     sm = messaging.SubMaster(['gpsLocationExternal', 'controlsState'])
   if pm is None:
-    pm = messaging.PubMaster(['liveMapData'])
+    pm = messaging.PubMaster(['liveOpenMapData'])
 
   while True:
     sm.update()

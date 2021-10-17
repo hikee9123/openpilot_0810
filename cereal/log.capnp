@@ -1336,11 +1336,11 @@ struct LiveNaviData {
   turnInfo @9 :Int32;
   distanceToTurn @10 :Int32;      
 
-   arrivalSec @11 :Float32;
-   arrivalDistance @12 :Float32;
+  arrivalSec @11 :Float32;
+  arrivalDistance @12 :Float32;
 }
 
-struct LiveMapData {
+struct LiveOpenMapData {
   speedLimitValid @0 :Bool;
   speedLimit @1 :Float32;
   speedLimitAheadValid @2 :Bool;
@@ -1481,7 +1481,7 @@ struct Event {
 
     # atom NAVI Info
     liveNaviData @82 :LiveNaviData;
-    liveMapData @83: LiveMapData;
+    liveOpenMapData @83: LiveOpenMapData;
 
     # *********** debug ***********
     testJoystick @52 :Joystick;
