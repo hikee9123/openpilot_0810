@@ -96,7 +96,7 @@ static void ui_print1(UIState *s, int x, int y,  const char* string, const char*
   }
      
 
-  x += len * 25;
+  x += len * 20;
   ui_text( s, x, y, msg_buf, nSize, color );
 }
 
