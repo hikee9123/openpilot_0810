@@ -27,6 +27,8 @@ void CUserPanel::refreshsystem()
     std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull.sh");
     std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull_cancel.sh");
     std::system("chmod 777 /data/openpilot/selfdrive/assets/addon/sh/run_mixplorer.sh");
+
+    std::system("chmod 777 /data/openpilot/selfdrive/manager/custom_dep.py");
 }
 
 CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
