@@ -278,7 +278,7 @@ class CarInterface(CarInterfaceBase):
                      CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER,
                      CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED, CAR.ELANTRA,
                      CAR.GRANDEUR_HEV_19]:
-      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
+      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity)]
 
     # set appropriate safety param for gas signal
     if candidate in HYBRID_CAR:
