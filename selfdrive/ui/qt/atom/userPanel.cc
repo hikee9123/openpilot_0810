@@ -62,9 +62,6 @@ CUserPanel::CUserPanel(QWidget* parent) : QFrame(parent)
       Params().putBool("PutPrebuiltOn", 0);
       std::system( "cd /data/openpilot; rm -f prebuilt" );
       std::system( gitpull );
-      refreshsystem();
-
-      std::system( "reboot" );
     }
 
 
