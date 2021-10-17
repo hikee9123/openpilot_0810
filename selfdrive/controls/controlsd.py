@@ -559,12 +559,6 @@ class Controls:
     return actuators, lac_log
 
   def update_button_timers(self, buttonEvents):
-
-    global trace1
-    log_alertTextMsg1 = trace1.global_alertTextMsg1
-    log_alertTextMsg2 = trace1.global_alertTextMsg2
-    log_alertTextMsg3 = trace1.global_alertTextMsg3
-
     # increment timer for buttons still pressed
     for k in self.button_timers.keys():
       if self.button_timers[k] > 0:
@@ -576,6 +570,11 @@ class Controls:
 
   def publish_logs(self, CS, start_time, actuators, lac_log):
     """Send actuators and hud commands to the car, send controlsstate and MPC logging"""
+   
+    global trace1
+    log_alertTextMsg1 = trace1.global_alertTextMsg1
+    log_alertTextMsg2 = trace1.global_alertTextMsg2
+    log_alertTextMsg3 = trace1.global_alertTextMsg3
 
     CC = car.CarControl.new_message()
     CC.enabled = self.enabled
