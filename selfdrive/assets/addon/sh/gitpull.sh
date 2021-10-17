@@ -22,12 +22,10 @@ if [ "$?" == "0" ]; then
       chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitcommit.sh
       chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull.sh
       chmod 777 /data/openpilot/selfdrive/assets/addon/sh/run_mixplorer.sh  
-      reboot
     elif [ -f /TICI ]; then
       sudo chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitcommit.sh
       sudo chmod 777 /data/openpilot/selfdrive/assets/addon/sh/gitpull.sh
       sudo chmod 777 /data/openpilot/selfdrive/assets/addon/sh/run_mixplorer.sh  
-      sudo reboot
     fi
     
   fi
