@@ -211,7 +211,6 @@ static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  
       sprintf(szSignal,"%d", nTrafficSign );
       ui_text(s, img_xpos + int(img_size*0.5), img_ypos + int(img_size*0.5) + int(nFontSize*0.5), szSign, nFontSize, COLOR_BLACK, "sans-bold"); 
     }
-
 }
 
 static void ui_draw_navi(UIState *s) 
