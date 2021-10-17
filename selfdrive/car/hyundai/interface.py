@@ -3,13 +3,11 @@ from cereal import car
 from panda import Panda
 from common.params import Params
 from selfdrive.config import Conversions as CV
-from selfdrive.car.hyundai.values import CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
+from selfdrive.car.hyundai.values import CAR, EV_CAR, HYBRID_CAR, CarControllerParams
 from selfdrive.car.hyundai.radar_interface import RADAR_START_ADDR
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
-from selfdrive.car.disable_ecu import disable_ecu
 
-ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
 
 class CarInterface(CarInterfaceBase):
@@ -22,14 +20,13 @@ class CarInterface(CarInterfaceBase):
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
     ret.carName = "hyundai"
-    #ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity)]
-    #ret.communityFeature = True
-    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy, 0)]
+    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundai, 0)]
+    #ret.safetyModel = car.CarParams.SafetyModel.hyundai
     ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1]
+    #ret.radarOffCan = False
 
-    ret.openpilotLongitudinalControl = Params().get_bool("DisableRadar") and candidate in [CAR.SONATA, CAR.SONATA_HYBRID, CAR.PALISADE, CAR.SANTA_FE]
-
-    ret.pcmCruise = not ret.openpilotLongitudinalControl
+    # Most Hyundai car ports are community features for now
+    #ret.communityFeature = candidate not in [CAR.SONATA, CAR.PALISADE]
 
     ret.steerActuatorDelay = 0.1  # Default delay
     ret.steerRateCost = 0.5
@@ -44,10 +41,7 @@ class CarInterface(CarInterfaceBase):
     ret.stopAccel = 0.0
     ret.startAccel = 0.0
 
-    ret.longitudinalActuatorDelayUpperBound = 1.0 # s
-
-
-    if candidate in [CAR.GRANDEUR_HEV_19]:
+    if candidate in [CAR.GRANDEUR_HEV_19, CAR.GRANDEUR_HEV_20]:
       ret.mass = 1675. + STD_CARGO_KG
       ret.wheelbase = 2.845
       ret.steerRatio = 16.5  #13.96   #12.5
@@ -62,9 +56,9 @@ class CarInterface(CarInterfaceBase):
 
       
       ret.lateralTuning.init('lqr')
-      ret.lateralTuning.lqr.scale = 1500     #1700.0
-      ret.lateralTuning.lqr.ki = 0.015       #0.01
-      ret.lateralTuning.lqr.dcGain = 0.0027  #0.00285   # 0.002237852961363602
+      ret.lateralTuning.lqr.scale = 1700     #1700.0
+      ret.lateralTuning.lqr.ki = 0.01       #0.01
+      ret.lateralTuning.lqr.dcGain = 0.00289  #0.00285   # 0.002237852961363602
       # 호야  1500, 0.015, 0.0027
       #  1700, 0.01, 0.0029
       #  2000, 0.01, 0.003
@@ -74,7 +68,17 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.c = [1., 0.]
       ret.lateralTuning.lqr.k = [-110., 451.]
       ret.lateralTuning.lqr.l = [0.33, 0.318]
-    elif candidate in [CAR.SANTA_FE, CAR.SANTA_FE_2022]:
+
+    elif candidate == CAR.SANTA_FE:
+      ret.lateralTuning.pid.kf = 0.00005
+      ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
+      ret.wheelbase = 2.766
+      # Values from optimizer
+      ret.steerRatio = 16.55  # 13.8 is spec end-to-end
+      tire_stiffness_factor = 0.82
+      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[9., 22.], [9., 22.]]
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.2, 0.35], [0.05, 0.09]]
+    elif candidate == CAR.SANTA_FE_2022:
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
       ret.wheelbase = 2.766
@@ -103,7 +107,6 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1999. + STD_CARGO_KG
       ret.wheelbase = 2.90
       ret.steerRatio = 15.6 * 1.15
-      tire_stiffness_factor = 0.63
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.05]]
     elif candidate in [CAR.ELANTRA, CAR.ELANTRA_GT_I30]:
@@ -279,9 +282,11 @@ class CarInterface(CarInterfaceBase):
     if candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ_PHEV, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
                      CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER,
                      CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED, CAR.ELANTRA,
-                     CAR.GRANDEUR_HEV_19]:
+                     CAR.GRANDEUR_HEV_19,  CAR.GRANDEUR_HEV_20 ]:
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity)]
 
+      #ret.safetyModel = car.CarParams.SafetyModel.hyundaiCommunity
+    
     # set appropriate safety param for gas signal
     if candidate in HYBRID_CAR:
       ret.safetyConfigs[0].safetyParam = 2
@@ -301,64 +306,17 @@ class CarInterface(CarInterfaceBase):
 
     ret.enableBsm = 0x58b in fingerprint[0]
 
-    if ret.openpilotLongitudinalControl:
-      ret.safetyConfigs[0].safetyParam |= Panda.FLAG_HYUNDAI_LONG
-
     return ret
-
-  @staticmethod
-  def init(CP, logcan, sendcan):
-    if CP.openpilotLongitudinalControl:
-      disable_ecu(logcan, sendcan, addr=0x7d0, com_cont_req=b'\x28\x83\x01')
 
   def update(self, c, can_strings):
     self.cp.update_strings(can_strings)
     self.cp_cam.update_strings(can_strings)
 
-    ret = self.CS.update(self.cp, self.cp_cam)
+    ret = self.CS.update(self.cp, self.cp_cam, c)
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
-    events = self.create_common_events(ret, pcm_enable=self.CS.CP.pcmCruise)
-
-    if self.CS.brake_error:
-      events.add(EventName.brakeUnavailable)
-    if self.CS.brake_hold and self.CS.CP.openpilotLongitudinalControl:
-      events.add(EventName.brakeHold)
-    if self.CS.park_brake:
-      events.add(EventName.parkBrake)
-
-    if self.CS.CP.openpilotLongitudinalControl:
-      buttonEvents = []
-
-      if self.CS.cruise_buttons != self.CS.prev_cruise_buttons:
-        be = car.CarState.ButtonEvent.new_message()
-        be.type = ButtonType.unknown
-        if self.CS.cruise_buttons != 0:
-          be.pressed = True
-          but = self.CS.cruise_buttons
-        else:
-          be.pressed = False
-          but = self.CS.prev_cruise_buttons
-        if but == Buttons.RES_ACCEL:
-          be.type = ButtonType.accelCruise
-        elif but == Buttons.SET_DECEL:
-          be.type = ButtonType.decelCruise
-        elif but == Buttons.GAP_DIST:
-          be.type = ButtonType.gapAdjustCruise
-        elif but == Buttons.CANCEL:
-          be.type = ButtonType.cancel
-        buttonEvents.append(be)
-
-        ret.buttonEvents = buttonEvents
-
-        for b in ret.buttonEvents:
-          # do enable on both accel and decel buttons
-          if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and not b.pressed:
-            events.add(EventName.buttonEnable)
-          # do disable on button down
-          if b.type == ButtonType.cancel and b.pressed:
-            events.add(EventName.buttonCancel)
+    events = self.create_common_events(ret)
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
     if ret.vEgo < (self.CP.minSteerSpeed + 2.) and self.CP.minSteerSpeed > 10.:
@@ -366,7 +324,10 @@ class CarInterface(CarInterfaceBase):
     if ret.vEgo > (self.CP.minSteerSpeed + 4.):
       self.low_speed_alert = False
     if self.low_speed_alert:
-      events.add(car.CarEvent.EventName.belowSteerSpeed)
+      events.add(EventName.belowSteerSpeed)
+    elif self.CS.lkas_button_on == 15:
+      events.add(EventName.invalidLkasSetting)
+    
 
     ret.events = events.to_msg()
 
@@ -374,8 +335,7 @@ class CarInterface(CarInterfaceBase):
     return self.CS.out
 
   def apply(self, c):
-    can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators,
-                               c.cruiseControl.cancel, c.hudControl.visualAlert, c.hudControl.setSpeed, c.hudControl.leftLaneVisible,
-                               c.hudControl.rightLaneVisible, c.hudControl.leftLaneDepart, c.hudControl.rightLaneDepart)
+    can_sends = self.CC.update( c, self.CS, self.frame )
+
     self.frame += 1
     return can_sends
