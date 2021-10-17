@@ -25,7 +25,7 @@ class CarInterface(CarInterfaceBase):
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundai, 0)]
     ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1]
 
-    ret.openpilotLongitudinalControl = Params().get_bool("DisableRadar") and candidate in [CAR.GRANDEUR_HEV_19,CAR.SONATA, CAR.SONATA_HYBRID, CAR.PALISADE, CAR.SANTA_FE]
+    ret.openpilotLongitudinalControl = Params().get_bool("DisableRadar") and candidate in [CAR.SONATA, CAR.SONATA_HYBRID, CAR.PALISADE, CAR.SANTA_FE]
 
     ret.pcmCruise = not ret.openpilotLongitudinalControl
 
