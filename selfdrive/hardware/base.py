@@ -139,5 +139,5 @@ class HardwareBase:
     pass
 
   @abstractmethod
-  def get_networks(self):
+  def get_ip_address(self):
     pass
