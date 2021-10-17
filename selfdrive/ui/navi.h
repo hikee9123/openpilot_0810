@@ -82,17 +82,22 @@ static void ui_print1(UIState *s, int x, int y,  const char* string, const char*
 
 
   NVGcolor color = nvgRGBA(127, 127, 127, 255);
-  ui_text( s, x, y, string, 30, color );
+  ui_text( s, x, y, string, 25, color );
 
   int len = strlen(string);
   color = nvgRGBA(180, 180, 180, 255);
   float fdata = atof(msg_buf);
 
+  int nSize = 30;
   if( fdata > 0 )
-     color = nvgRGBA(255, 255, 255, 255);
+  {
+    color = nvgRGBA(255, 255, 255, 255);
+    nSize = 48;
+  }
+     
 
-  x += len * 20;
-  ui_text( s, x, y, msg_buf, 48, color );
+  x += len * 25;
+  ui_text( s, x, y, msg_buf, nSize, color );
 }
 
 static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  float speedLimitAheadDistance ) 
