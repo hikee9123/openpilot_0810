@@ -71,6 +71,29 @@ static void ui_print(UIState *s, int x, int y,  const char* fmt, ... )
 }
 
 
+static void ui_print1(UIState *s, int x, int y,  const char* string, const char* fmt, ... )
+{
+  char* msg_buf = NULL;
+  va_list args;
+  va_start(args, fmt);
+  vasprintf( &msg_buf, fmt, args);
+  va_end(args);
+
+  NVGcolor color = nvgRGBA(127, 127, 127, 255);
+  nvgFillColor(s->vg, color);
+  nvgText(s->vg, x, y, string, NULL);
+
+  int len = strlen(string);
+  color = nvgRGBA(200, 200, 200, 200);
+  float fdata = atof(msg_buf);
+
+  if( fdata > 0 )
+     color = nvgRGBA(255, 255, 255, 255);
+
+  nvgFillColor(s->vg, color);
+  nvgText(s->vg, x + len*50, y, msg_buf, NULL);
+}
+
 static void ui_draw_traffic_sign(UIState *s, float map_sign, float speedLimit,  float speedLimitAheadDistance ) 
 {
     const char *traffic_sign = NULL;
@@ -213,20 +236,20 @@ static void ui_draw_navi(UIState *s)
   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
 
   int xpos = 250;
-  int ypos = 200;
+  int ypos = 300;
   int nGap = 50;
 
-  ui_print(s, xpos, ypos, "SLV:%d", SpeedLimitValid  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "SL:%.1f", SpeedLimit  );      ypos += nGap; ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLV:","%d", SpeedLimitValid  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "SL:","%.1f", SpeedLimit  );      ypos += nGap; ypos += nGap;
   
-  ui_print(s, xpos, ypos, "SLAV:%d", SpeedLimitAheadValid  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "SLA:%.1f", SpeedLimitAhead  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "SLAD:%.1f", SpeedLimitAheadDistance  );  ypos += nGap; ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLAV:","%d", SpeedLimitAheadValid  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLA:","%.1f", SpeedLimitAhead  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLAD:","%.1f", SpeedLimitAheadDistance  );  ypos += nGap; ypos += nGap;
 
-  ui_print(s, xpos, ypos, "TSLV:%d", TurnSpeedLimitValid  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "TSL:%.1f", TurnSpeedLimit  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "TSLED:%.1f", TurnSpeedLimitEndDistance  );  ypos += nGap;
-  ui_print(s, xpos, ypos, "TSLS:%d", TurnSpeedLimitSign  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "TSLV:","%d", TurnSpeedLimitValid  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "TSL:","%.1f", TurnSpeedLimit  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "TSLED:","%.1f", TurnSpeedLimitEndDistance  );  ypos += nGap;
+  ui_print1(s, xpos, ypos, "TSLS:","%d", TurnSpeedLimitSign  );  ypos += nGap;
 
 
 
