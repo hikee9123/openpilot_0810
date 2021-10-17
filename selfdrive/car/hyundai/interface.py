@@ -23,7 +23,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.carName = "hyundai"
     #ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity)]
-    ret.communityFeature = True
+    #ret.communityFeature = True
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy, 0)]
     ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1]
 
