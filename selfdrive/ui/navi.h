@@ -226,6 +226,8 @@ static void ui_draw_navi(UIState *s)
 
   int   SpeedLimitValid = scene.liveOpenMapData.getSpeedLimitValid();
   float SpeedLimit = scene.liveOpenMapData.getSpeedLimit();
+  float speedLimitDistance = scene.liveOpenMapData.getSpeedLimitDistance();
+
   int   SpeedLimitAheadValid = scene.liveOpenMapData.getSpeedLimitAheadValid();
   float SpeedLimitAhead = scene.liveOpenMapData.getSpeedLimitAhead();
   float SpeedLimitAheadDistance =  scene.liveOpenMapData.getSpeedLimitAheadDistance();
@@ -243,10 +245,10 @@ static void ui_draw_navi(UIState *s)
   int nGap = 50;
 
   nvgTextAlign( s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
-  ui_print1(s, xpos, ypos, "SLV:","%d, %.1f", SpeedLimitValid, SpeedLimit  );  ypos += nGap; ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLV:","%d, %.1f, %.1f", SpeedLimitValid, SpeedLimit, speedLimitDistance  );  ypos += nGap; ypos += nGap;
   
-  ui_print1(s, xpos, ypos, "SLAV:","%d, %.1f", SpeedLimitAheadValid, SpeedLimitAhead  );  ypos += nGap;
-  ui_print1(s, xpos, ypos, "SLAD:","%.1f", SpeedLimitAheadDistance  );  ypos += nGap; ypos += nGap;
+  ui_print1(s, xpos, ypos, "SLAV:","%d, %.1f, %.1f", SpeedLimitAheadValid, SpeedLimitAhead, SpeedLimitAheadDistance  );  ypos += nGap; ypos += nGap;
+
 
   ui_print1(s, xpos, ypos, "TSLV:","%d, %.1f", TurnSpeedLimitValid, TurnSpeedLimit  );  ypos += nGap;
   ui_print1(s, xpos, ypos, "TSLED:","%.1f", TurnSpeedLimitEndDistance  );  ypos += nGap;
