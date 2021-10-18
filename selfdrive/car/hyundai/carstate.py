@@ -62,7 +62,7 @@ class CarState(CarStateBase):
     if self.time_break:
       limitAngleDeg = 50
 
-    if not self.acc_mode and self.clu_Vanz < 40 and steeringAngleDeg > limitAngleDeg and steeringTorque > 250:
+    if not self.acc_mode and self.clu_Vanz < 40 and steeringAngleDeg > limitAngleDeg and steeringTorque > 300:
        return True
 
     return False
@@ -84,15 +84,15 @@ class CarState(CarStateBase):
     if self.cruise_buttons_old == self.cruise_buttons:
       if self.engage_enable:
         if engage_disable_status:
-            self.engage_enable = False
+          self.engage_enable = False
         return self.engage_enable
       elif self.time_delay_int > 0:
         self.time_delay_int -= 1
 
       if self.time_delay_int > 100:
         pass
-      elif ret.vEgo < 5 or not left_lane or not right_lane or ret.steeringPressed or ret.leftBlinker or ret.rightBlinker:  # 15 km/h
-        self.time_delay_int = 100
+      elif ret.vEgo < 5 or not left_lane or not right_lane or ret.leftBlinker or ret.rightBlinker:  # 15 km/h  or ret.steeringPressed
+        self.time_delay_int = 50
       elif self.time_delay_int <= 0:
         self.engage_enable = True
 

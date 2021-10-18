@@ -29,7 +29,7 @@ class NaviControl():
 
     self.moveAvg = mvAvg.MoveAvg()
 
-    self.gasPressed_old = 0
+    self.gasPressed_cnt = 0
 
 
 
@@ -177,17 +177,18 @@ class NaviControl():
     if CS.cruise_set_mode == 2:
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = vFuture    
-    elif CS.gasPressed == self.gasPressed_old:
-      return ctrl_speed
-    elif self.gasPressed_old:
-      clu_Vanz = CS.clu_Vanz  #* dRate
-      ctrl_speed = max( ctrl_speed, clu_Vanz )
-      CS.set_cruise_speed( ctrl_speed )
+    elif CS.gasPressed:
+      self.gasPressed_cnt += 1
+      if self.gasPressed_cnt > 10:
+        self.gasPressed_cnt = 0
+        clu_Vanz = CS.clu_Vanz  #* dRate
+        ctrl_speed = max( ctrl_speed, clu_Vanz )
+        CS.set_cruise_speed( ctrl_speed )
     else:
       dRate = interp( modelSpeed, [80,200], [ 0.9, 1 ] )
       ctrl_speed *= dRate
 
-    self.gasPressed_old = CS.gasPressed
+
     return  ctrl_speed
 
 
