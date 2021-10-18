@@ -202,11 +202,11 @@ class MapD():
     map_data_msg.liveOpenMapData.lastGpsTimestamp = self.last_gps.timestamp
 
     if speed_limit is None:
-      map_data_msg.liveOpenMapData.speedLimitValid = 0
+      map_data_msg.liveOpenMapData.speedLimitValid = False
       #map_data_msg.liveOpenMapData.speedLimit = 0
       map_data_msg.liveOpenMapData.speedLimitDistance = 0
     else:
-      map_data_msg.liveOpenMapData.speedLimitValid = 1
+      map_data_msg.liveOpenMapData.speedLimitValid = True
       map_data_msg.liveOpenMapData.speedLimit = float(speed_limit.value*3.6)
       map_data_msg.liveOpenMapData.speedLimitDistance = float(speed_limit.start)
 
