@@ -255,7 +255,8 @@ class Route():
     if len(limits_ahead) == 0 or limits_ahead[0].start != 0:
       return None
 
-    return limits_ahead[0].value
+    #return limits_ahead[0].value
+    return limits_ahead[0]
 
   @property
   def current_curvature_speed_limit_section(self):

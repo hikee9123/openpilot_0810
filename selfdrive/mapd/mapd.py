@@ -200,8 +200,17 @@ class MapD():
     map_data_msg.valid = sm.all_alive_and_valid(service_list=['gpsLocationExternal'])
 
     map_data_msg.liveOpenMapData.lastGpsTimestamp = self.last_gps.timestamp
-    map_data_msg.liveOpenMapData.speedLimitValid = bool(speed_limit is not None)
-    map_data_msg.liveOpenMapData.speedLimit = float(speed_limit*3.6 if speed_limit is not None else 0.0)
+
+    if speed_limit is None:
+      map_data_msg.liveOpenMapData.speedLimitValid = 0
+      #map_data_msg.liveOpenMapData.speedLimit = 0
+      map_data_msg.liveOpenMapData.speedLimitDistance = 0
+    else:
+      map_data_msg.liveOpenMapData.speedLimitValid = 1
+      map_data_msg.liveOpenMapData.speedLimit = float(speed_limit.value*3.6)
+      map_data_msg.liveOpenMapData.speedLimitDistance = float(speed_limit.start)
+
+
     map_data_msg.liveOpenMapData.speedLimitAheadValid = bool(next_speed_limit_section is not None)
     map_data_msg.liveOpenMapData.speedLimitAhead = float(next_speed_limit_section.value*3.6
                                                      if next_speed_limit_section is not None else 0.0)

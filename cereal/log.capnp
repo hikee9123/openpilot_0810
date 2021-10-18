@@ -1343,17 +1343,18 @@ struct LiveNaviData {
 struct LiveOpenMapData {
   speedLimitValid @0 :Bool;
   speedLimit @1 :Float32;
-  speedLimitAheadValid @2 :Bool;
-  speedLimitAhead @3 :Float32;
-  speedLimitAheadDistance @4 :Float32;
-  turnSpeedLimitValid @5 :Bool;
-  turnSpeedLimit @6 :Float32;
-  turnSpeedLimitEndDistance @7 :Float32;
-  turnSpeedLimitSign @8 :Int16;
-  turnSpeedLimitsAhead @9 :List(Float32);
-  turnSpeedLimitsAheadDistances @10 :List(Float32);
-  turnSpeedLimitsAheadSigns @11 :List(Int16);
-  lastGpsTimestamp @12 :Int64;  # Milliseconds since January 1, 1970.
+  speedLimitDistance @2 :Float32;
+  speedLimitAheadValid @3 :Bool;
+  speedLimitAhead @4 :Float32;
+  speedLimitAheadDistance @5 :Float32;
+  turnSpeedLimitValid @6 :Bool;
+  turnSpeedLimit @7 :Float32;
+  turnSpeedLimitEndDistance @8 :Float32;
+  turnSpeedLimitSign @9 :Int16;
+  turnSpeedLimitsAhead @10 :List(Float32);
+  turnSpeedLimitsAheadDistances @11 :List(Float32);
+  turnSpeedLimitsAheadSigns @12 :List(Int16);
+  lastGpsTimestamp @13 :Int64;  # Milliseconds since January 1, 1970.
 }
 
 
