@@ -204,17 +204,18 @@ class MapD():
     if speed_limit is None:
       map_data_msg.liveOpenMapData.speedLimitValid = False
       #map_data_msg.liveOpenMapData.speedLimit = 0
-      map_data_msg.liveOpenMapData.speedLimitDistance = 0
+      #map_data_msg.liveOpenMapData.speedLimitDistance = 0
     else:
       map_data_msg.liveOpenMapData.speedLimitValid = True
       map_data_msg.liveOpenMapData.speedLimit = float(speed_limit.value*3.6)
-      map_data_msg.liveOpenMapData.speedLimitDistance = float(speed_limit.start)
+      map_data_msg.liveOpenMapData.speedLimitDistance = float(speed_limit.end)
 
 
     map_data_msg.liveOpenMapData.speedLimitAheadValid = bool(next_speed_limit_section is not None)
     map_data_msg.liveOpenMapData.speedLimitAhead = float(next_speed_limit_section.value*3.6
                                                      if next_speed_limit_section is not None else 0.0)
-    map_data_msg.liveOpenMapData.speedLimitAheadDistance = float(next_speed_limit_section.start
+
+    map_data_msg.liveOpenMapData.speedLimitAheadDistance = float(next_speed_limit_section.end
                                                              if next_speed_limit_section is not None else 0.0)
 
     map_data_msg.liveOpenMapData.turnSpeedLimitValid = bool(turn_speed_limit_section is not None)
@@ -222,8 +223,9 @@ class MapD():
                                                     if turn_speed_limit_section is not None else 0.0)
     map_data_msg.liveOpenMapData.turnSpeedLimitSign = int(turn_speed_limit_section.curv_sign
                                                       if turn_speed_limit_section is not None else 0)
-    map_data_msg.liveOpenMapData.turnSpeedLimitEndDistance = float(turn_speed_limit_section.end
+    map_data_msg.liveOpenMapData.turnSpeedLimitEndDistance = float(turn_speed_limit_section.start
                                                                if turn_speed_limit_section is not None else 0.0)
+
     map_data_msg.liveOpenMapData.turnSpeedLimitsAhead = [float(s.value) for s in next_turn_speed_limit_sections]
     map_data_msg.liveOpenMapData.turnSpeedLimitsAheadDistances = [float(s.start) for s in next_turn_speed_limit_sections]
     map_data_msg.liveOpenMapData.turnSpeedLimitsAheadSigns = [float(s.curv_sign) for s in next_turn_speed_limit_sections]
