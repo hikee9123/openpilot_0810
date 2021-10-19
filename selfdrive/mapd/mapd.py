@@ -223,7 +223,7 @@ class MapD():
                                                     if turn_speed_limit_section is not None else 0.0)
     map_data_msg.liveOpenMapData.turnSpeedLimitSign = int(turn_speed_limit_section.curv_sign
                                                       if turn_speed_limit_section is not None else 0)
-    map_data_msg.liveOpenMapData.turnSpeedLimitEndDistance = float(turn_speed_limit_section.start
+    map_data_msg.liveOpenMapData.turnSpeedLimitEndDistance = float(turn_speed_limit_section.end
                                                                if turn_speed_limit_section is not None else 0.0)
 
     map_data_msg.liveOpenMapData.turnSpeedLimitsAhead = [float(s.value) for s in next_turn_speed_limit_sections]
