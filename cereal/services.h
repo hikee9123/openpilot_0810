@@ -42,7 +42,10 @@ static struct service services[] = {
   { "modelV2", 8038, true, 20, 40 },
   { "managerState", 8039, true, 2, 1 },
   { "uploaderState", 8040, true, 0, 1 },
-  { "testJoystick", 8041, false, 0, -1 },
+
+  { "liveNaviData", 8041, true, 0, -1 },
+
+  { "testJoystick", 8042, false, 0, -1 },
 };
 #endif
 
