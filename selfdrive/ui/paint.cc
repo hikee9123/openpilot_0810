@@ -301,6 +301,7 @@ void ui_nvg_init(UIState *s) {
   std::vector<std::pair<const char *, const char *>> images = {
     {"wheel", "../assets/img_chffr_wheel.png"},
     {"driver_face", "../assets/img_driver_face.png"},
+    {"traf_turn", "../assets/img_trafficSign_turn.png"}, 
 
     {"compass", "../assets/addon/Image/img_compass.png"},
     {"direction", "../assets/addon/Image/img_direction.png"},
@@ -317,7 +318,6 @@ void ui_nvg_init(UIState *s) {
     {"speed_110", "../assets/addon/navigation/img_110_speedahead.png"},
     {"speed_var", "../assets/addon/navigation/img_var_speedahead.png"}, 
     {"img_space", "../assets/addon/navigation/img_space.png"},
-    {"traf_turn", "../assets/img_trafficSign_turn.png"}, 
     {"car_left",  "../assets/addon/navigation/img_car_left.png"},
     {"car_right", "../assets/addon/navigation/img_car_right.png"},
     {"speed_bump", "../assets/addon/navigation/img_speed_bump.png"},
