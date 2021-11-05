@@ -157,10 +157,12 @@ class NaviControl():
 
     elif CS.is_highway or speedLimit < 30:
       return  cruise_set_speed_kph
-    elif speedLimitDistance >= 50:
+    elif v_ego_kph < 80:
       if speedLimit <= 60:
-        spdTarget = interp( speedLimitDistance, [50, 600], [ speedLimit, speedLimit + 50 ] )
-      else:
+        spdTarget = interp( speedLimitDistance, [80, 600], [ speedLimit, speedLimit + 50 ] )
+      else:      
+        spdTarget = interp( speedLimitDistance, [150, 900], [ speedLimit, speedLimit + 50 ] )
+    elif speedLimitDistance >= 50:
         spdTarget = interp( speedLimitDistance, [150, 900], [ speedLimit, speedLimit + 30 ] )
     else:
       spdTarget = speedLimit
@@ -174,20 +176,27 @@ class NaviControl():
 
   def auto_speed_control( self, c, CS, ctrl_speed, path_plan ):
     modelSpeed = path_plan.modelSpeed
+    cruise_speed = False
     if CS.cruise_set_mode == 2:
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = vFuture    
-    elif CS.gasPressed == self.gasPressed_old:
-      return ctrl_speed
+    elif CS.gasPressed:
+      self.gasPressed_old += 1
+      if self.gasPressed_old > 50:
+        self.gasPressed_old = 0
+        cruise_speed = True
     elif self.gasPressed_old:
-      clu_Vanz = CS.clu_Vanz  #* dRate
-      ctrl_speed = max( ctrl_speed, clu_Vanz )
-      CS.set_cruise_speed( ctrl_speed )
+      self.gasPressed_old = 0
+      cruise_speed = True
     else:
       dRate = interp( modelSpeed, [80,200], [ 0.9, 1 ] )
       ctrl_speed *= dRate
 
-    self.gasPressed_old = CS.gasPressed
+    if cruise_speed:
+      clu_Vanz = CS.clu_Vanz  #* dRate
+      ctrl_speed = max( ctrl_speed, clu_Vanz )
+      CS.set_cruise_speed( ctrl_speed )  
+
     return  ctrl_speed
 
 
