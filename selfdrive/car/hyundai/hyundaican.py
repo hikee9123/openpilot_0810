@@ -17,10 +17,8 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   values["CF_Lkas_MsgCount"] = frame % 0x10
 
   if car_fingerprint in [CAR.GRANDEUR_HEV_19]:
-    nSysWarnVal = 4
-    values["CF_Lkas_SysWarning"] = nSysWarnVal if sys_warning else 0
+    values["CF_Lkas_SysWarning"] = 4 if sys_warning else 0
      
-
 
     # CF_Lkas_SysWarning  4 keep hand on wheel
     # CF_Lkas_SysWarning  9 keep hands on wheel (red) + beep
