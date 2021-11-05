@@ -97,24 +97,17 @@ def create_hda_mfc(packer, CS, c ):
   if c.hudControl.rightLaneVisible:
      ldwSysState += 2
 
-  #  if CS.acc_mode:
-  #    hda_icon_state = 2
-  #  elif enabled:
-  #    hda_icon_state = 1
-  #  else:
-  #    hda_icon_state = 0
+    #if CS.acc_mode:
+    #  hda_icon_state = 2
+    #elif enabled:
+    #  hda_icon_state = 1
+    #else:
+    #  hda_icon_state = 0
 
     #values["HDA_Icon_Wheel"] = 1 if enabled else 0
     #values["HDA_Icon_State"] = hda_icon_state
   values["HDA_LdwSysState"] = ldwSysState
   values["HDA_Icon_Wheel"] = 1 if enabled else 0
-  
-  # HDA_Icon_State  2 HDA active, 1 HDA available, 0  HDA not available
-  # HDA_USM 2 = ?
-  # HDA_Active    1 AUTO(icon)==HDA_VSetReq(highway limit speed), 0 HDA(icon)
-  # HDA_Icon_State 0 = HDA not available
-  # HDA_Icon_State 1 = HDA available
-  # HDA_Icon_State 2 = HDA active
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
 def create_acc_commands(packer, enabled, accel, jerk, idx, lead_visible, set_speed, stopping):
