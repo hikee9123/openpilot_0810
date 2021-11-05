@@ -190,7 +190,7 @@ class NaviControl():
       cruise_speed = True
     else:
       dRate = interp( modelSpeed, [80,200], [ 0.9, 1 ] )
-      ctrl_speed *= dRate
+      #ctrl_speed *= dRate
 
     if cruise_speed:
       clu_Vanz = CS.clu_Vanz  #* dRate
