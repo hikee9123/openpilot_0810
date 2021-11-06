@@ -133,6 +133,8 @@ class DriverStatus():
 
     self._set_timers(active_monitoring=True)
 
+    self.step_cnt = 0
+
   def _set_timers(self, active_monitoring):
     if self.active_monitoring_mode and self.awareness <= self.threshold_prompt:
       if active_monitoring:
