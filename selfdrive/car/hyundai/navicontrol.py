@@ -29,8 +29,8 @@ class NaviControl():
 
     self.moveAvg = mvAvg.MoveAvg()
 
-    self.gasPressed_old = 0
-
+    self.gasPressed_time = 0
+    self.gasWait_time = 0
 
 
   def update_lateralPlan( self ):
@@ -157,11 +157,13 @@ class NaviControl():
 
     elif CS.is_highway or speedLimit < 30:
       return  cruise_set_speed_kph
-    elif speedLimitDistance >= 50:
+    elif v_ego_kph < 80:
       if speedLimit <= 60:
-        spdTarget = interp( speedLimitDistance, [50, 600], [ speedLimit, speedLimit + 50 ] )
-      else:
-        spdTarget = interp( speedLimitDistance, [150, 900], [ speedLimit, speedLimit + 30 ] )
+        spdTarget = interp( speedLimitDistance, [80, 600], [ speedLimit, speedLimit + 50 ] )
+      else:      
+        spdTarget = interp( speedLimitDistance, [150, 900], [ speedLimit, speedLimit + 50 ] )
+    elif speedLimitDistance >= 50:
+        spdTarget = interp( speedLimitDistance, [200, 900], [ speedLimit, speedLimit + 30 ] )
     else:
       spdTarget = speedLimit
 
@@ -173,21 +175,34 @@ class NaviControl():
 
 
   def auto_speed_control( self, c, CS, ctrl_speed, path_plan ):
-    modelSpeed = path_plan.modelSpeed
+    cruise_speed = False
     if CS.cruise_set_mode == 2:
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = vFuture    
-    elif CS.gasPressed == self.gasPressed_old:
-      return ctrl_speed
-    elif self.gasPressed_old:
+    elif CS.gasPressed:
+      self.gasPressed_time += 1
+      if self.gasPressed_time > 50:
+        self.gasPressed_time = 0
+        cruise_speed = True
+    elif self.gasPressed_time:
+      self.gasPressed_time = 0
+      self.gasWait_time = 500      
+      cruise_speed = True
+    elif CS.cruise_set_mode == 3:
+      if self.gasWait_time > 0:
+        self.gasWait_time -= 1
+      elif ctrl_speed > 90:
+        modelSpeed = path_plan.modelSpeed * CV.MS_TO_KPH
+        dRate = interp( modelSpeed, [80,200], [ 0.9, 1 ] )
+        ctrl_speed *= dRate
+        if ctrl_speed < 90:
+          ctrl_speed = 90
+
+    if cruise_speed:
       clu_Vanz = CS.clu_Vanz  #* dRate
       ctrl_speed = max( ctrl_speed, clu_Vanz )
-      CS.set_cruise_speed( ctrl_speed )
-    else:
-      dRate = interp( modelSpeed, [80,200], [ 0.9, 1 ] )
-      ctrl_speed *= dRate
+      CS.set_cruise_speed( ctrl_speed )  
 
-    self.gasPressed_old = CS.gasPressed
     return  ctrl_speed
 
 
