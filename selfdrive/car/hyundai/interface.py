@@ -22,8 +22,7 @@ class CarInterface(CarInterfaceBase):
     ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
     ret.carName = "hyundai"
-    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy, 0)]
-    #ret.radarOffCan = RADAR_START_ADDR not in fingerprint[1]
+    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundai, 0)]
     ret.radarOffCan = False
     ret.communityFeature = True
 
@@ -280,8 +279,9 @@ class CarInterface(CarInterfaceBase):
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
     if candidate in [CAR.HYUNDAI_GENESIS, CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.IONIQ_PHEV, CAR.IONIQ, CAR.KONA_EV, CAR.KIA_SORENTO,
                      CAR.SONATA_LF, CAR.KIA_NIRO_EV, CAR.KIA_OPTIMA, CAR.VELOSTER, CAR.KIA_STINGER,
-                     CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED, CAR.ELANTRA,
-                     CAR.GRANDEUR_HEV_19 ]:
+                     CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.KIA_CEED, CAR.ELANTRA]:
+      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
+    elif candidate in [CAR.GRANDEUR_HEV_19]:
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity, 0)]
 
     # set appropriate safety param for gas signal
