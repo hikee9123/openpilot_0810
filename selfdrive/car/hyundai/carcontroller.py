@@ -30,8 +30,6 @@ class CarController():
 
     self.NC = NaviControl(self.p)
     self.steerWarning_time = 0
-    self.steer_torque_wait_timer = 0
-    self.blinker_safety_timer = 0
 
     # hud
     self.hud_timer_left = 0
@@ -89,24 +87,8 @@ class CarController():
     if self.steerWarning_time > 0:
       self.steerWarning_time -= 1
 
-    # 2. lane change
-    if path_plan.laneChangeState != LaneChangeState.off:
-      self.steer_torque_wait_timer = 0
-      self.blinker_safety_timer = 0
-    elif CS.out.leftBlinker or CS.out.rightBlinker:
-      self.blinker_safety_timer += 1
-      if self.blinker_safety_timer > 5 and steeringTorque > 80:
-        self.steer_torque_wait_timer = 100
-  
-    if self.steer_torque_wait_timer:
-      if steerAngleDegAbs > 10:
-        self.steer_torque_wait_timer = 100
-
-    if self.steer_torque_wait_timer > 0:
-      self.steer_torque_wait_timer -= 1   
-    
+   
     lkas_active = enabled and not self.steerWarning_time and CS.out.vEgo >= CS.CP.minSteerSpeed and CS.out.cruiseState.enabled
-    lkas_active = lkas_active and self.steer_torque_wait_timer == 0
     return lkas_active
   
   def smooth_steer( self, apply_torque ):
@@ -123,23 +105,52 @@ class CarController():
 
 
   def update_debug(self, CS, vFuture ):
-    cruiseSwState = CS.clu11["CF_Clu_CruiseSwState"]
-    cruiseSwMain = CS.clu11["CF_Clu_CruiseSwMain"]
-    sldMainSW = CS.clu11["CF_Clu_SldMainSW"]
     hdaVSetReq = CS.lfahda["HDA_VSetReq"]    
 
     str_log1 = 'MODE={:.0f} GAP={:.0f} hda={:.1f} vF={:.1f}'.format(  CS.cruise_set_mode, CS.out.cruiseState.gapSet, hdaVSetReq, vFuture )
     trace1.printf2( '{}'.format( str_log1 ) )
 
-    str_log1 = 'SW1={:.0f},{:.0f},{:.0f}'.format( cruiseSwState, cruiseSwMain, sldMainSW )
-    trace1.printf3( '{}'.format( str_log1 ) )    
+    #str_log1 = 'SW1={:.0f},{:.0f},{:.0f}'.format( cruiseSwState, cruiseSwMain, sldMainSW )
+    #trace1.printf3( '{}'.format( str_log1 ) )    
+
+  def updateLongitudinal(self, c, CS, frame):
+    enabled = c.enabled
+    actuators = c.actuators
+    hud_speed = c.hudControl.setSpeed    
+    # tester present - w/ no response (keeps radar disabled)
+    can_sends = []
+    if (frame % 100) == 0:
+        can_sends.append([0x7D0, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", 0])
+
+    if frame % 2 == 0:
+      lead_visible = False
+      accel = actuators.accel if enabled else 0
+
+      jerk = clip(2.0 * (accel - CS.out.aEgo), -12.7, 12.7)
+
+      if accel < 0:
+        accel = interp(accel - CS.out.aEgo, [-1.0, -0.5], [2 * accel, accel])
+
+      accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
+
+      stopping = (actuators.longControlState == LongCtrlState.stopping)
+      set_speed_in_units = hud_speed * (CV.MS_TO_MPH if CS.clu11["CF_Clu_SPEED_UNIT"] == 1 else CV.MS_TO_KPH)
+      can_sends.extend(create_acc_commands(self.packer, enabled, accel, jerk, int(frame / 2), lead_visible, set_speed_in_units, stopping))
+
+    # 5 Hz ACC options
+    if frame % 20 == 0:
+      can_sends.extend(create_acc_opt(self.packer))
+
+    # 2 Hz front radar options
+    if frame % 50 == 0:
+      can_sends.append(create_frt_radar_opt(self.packer))      
+
+    return  can_sends
 
   def update(self, c, CS, frame ):
     enabled = c.enabled
     actuators = c.actuators
     pcm_cancel_cmd = c.cruiseControl.cancel
-    hud_speed = c.hudControl.setSpeed
-    visual_alert = c.hudControl.visualAlert
     left_lane = c.hudControl.leftLaneVisible 
     right_lane = c.hudControl.rightLaneVisible 
     left_lane_warning = c.hudControl.leftLaneDepart 
@@ -175,20 +186,16 @@ class CarController():
     self.lkas11_cnt %= 0x10
 
     can_sends = []
-
-    # tester present - w/ no response (keeps radar disabled)
-    if CS.CP.openpilotLongitudinalControl:
-      if (frame % 100) == 0:
-        can_sends.append([0x7D0, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", 0])
-
     can_sends.append(create_lkas11(self.packer, self.lkas11_cnt, self.car_fingerprint, apply_steer, lkas_active,
                                    CS.lkas11, sys_warning, sys_state, enabled,
                                    left_lane, right_lane,
                                    left_lane_warning, right_lane_warning))
-    #if apply_steer:
+
     can_sends.append( create_mdps12(self.packer, frame, CS.mdps12) )
 
-    if not CS.CP.openpilotLongitudinalControl:
+    if  CS.CP.openpilotLongitudinalControl:
+      can_sends.append( self.updateLongitudinal( c, CS, frame ) )
+    else:
       if pcm_cancel_cmd:
         can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.CANCEL))
       elif CS.out.cruiseState.standstill:
@@ -217,21 +224,6 @@ class CarController():
         else:
           self.resume_cnt = 0
 
-    if frame % 2 == 0 and CS.CP.openpilotLongitudinalControl:
-      lead_visible = False
-      accel = actuators.accel if enabled else 0
-
-      jerk = clip(2.0 * (accel - CS.out.aEgo), -12.7, 12.7)
-
-      if accel < 0:
-        accel = interp(accel - CS.out.aEgo, [-1.0, -0.5], [2 * accel, accel])
-
-      accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
-
-      stopping = (actuators.longControlState == LongCtrlState.stopping)
-      set_speed_in_units = hud_speed * (CV.MS_TO_MPH if CS.clu11["CF_Clu_SPEED_UNIT"] == 1 else CV.MS_TO_KPH)
-      can_sends.extend(create_acc_commands(self.packer, enabled, accel, jerk, int(frame / 2), lead_visible, set_speed_in_units, stopping))
-
     # 20 Hz LFA MFA message
     if frame % 5 == 0:
       self.update_debug( CS, vFuture )
@@ -240,13 +232,5 @@ class CarController():
       elif self.car_fingerprint in FEATURES["send_hda_mfa"]:
         can_sends.append(create_hda_mfc(self.packer, CS, c ))
         
-    # 5 Hz ACC options
-    if frame % 20 == 0 and CS.CP.openpilotLongitudinalControl:
-      can_sends.extend(create_acc_opt(self.packer))
-
-    # 2 Hz front radar options
-    if frame % 50 == 0 and CS.CP.openpilotLongitudinalControl:
-      can_sends.append(create_frt_radar_opt(self.packer))
-
     self.lkas11_cnt += 1
     return can_sends

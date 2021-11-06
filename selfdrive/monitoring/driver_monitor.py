@@ -56,8 +56,6 @@ class DRIVER_MONITOR_SETTINGS():
     self._MAX_TERMINAL_ALERTS = 30  # not allowed to engage after 3 terminal alerts
     self._MAX_TERMINAL_DURATION = int(30 / self._DT_DMON)  # not allowed to engage after 30s of terminal alerts
 
-    self.step_cnt = 0
-
 
 # model output refers to center of cropped image, so need to apply the x displacement offset
 RESIZED_FOCAL = 320.0
@@ -133,8 +131,6 @@ class DriverStatus():
 
     self._set_timers(active_monitoring=True)
 
-    self.step_cnt = 0
-
   def _set_timers(self, active_monitoring):
     if self.active_monitoring_mode and self.awareness <= self.threshold_prompt:
       if active_monitoring:
@@ -175,11 +171,6 @@ class DriverStatus():
 
     pitch_error = 0 if pitch_error > 0 else abs(pitch_error) # no positive pitch limit
     yaw_error = abs(yaw_error)
-
-    self.step_cnt += 1
-    if self.step_cnt > 50:
-      self.step_cnt = 0
-      print( "left_blink={:.3f}  right_blink={:.3f}  cfactor={:.3f}".format( blink.left_blink, blink.right_blink, blink.cfactor ) )
 
     if pitch_error*self.settings._PITCH_WEIGHT > self.settings._METRIC_THRESHOLD*pose.cfactor or \
        yaw_error > self.settings._METRIC_THRESHOLD*pose.cfactor:
