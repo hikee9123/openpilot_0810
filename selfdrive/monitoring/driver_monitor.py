@@ -31,7 +31,7 @@ class DRIVER_MONITOR_SETTINGS():
     self._PARTIAL_FACE_THRESHOLD = 0.765 if TICI else 0.43
     self._EYE_THRESHOLD = 0.61 if TICI else 0.55
     self._SG_THRESHOLD = 0.89 if TICI else 0.86
-    self._BLINK_THRESHOLD = 0.82 if TICI else 0.588
+    self._BLINK_THRESHOLD = 0.82 if TICI else  0.38  # 0.588
     self._BLINK_THRESHOLD_SLACK = 0.9 if TICI else 0.77
     self._BLINK_THRESHOLD_STRICT = self._BLINK_THRESHOLD
     self._PITCH_WEIGHT = 1.35  # pitch matters a lot more
@@ -175,7 +175,7 @@ class DriverStatus():
     yaw_error = abs(yaw_error)
 
     self.step_cnt += 1
-    if self.step_cnt > 2:
+    if self.step_cnt > 50:
       self.step_cnt = 0
       print( "left_blink={:.3f}  right_blink={:.3f}  cfactor={:.3f}".format( blink.left_blink, blink.right_blink, blink.cfactor ) )
 
