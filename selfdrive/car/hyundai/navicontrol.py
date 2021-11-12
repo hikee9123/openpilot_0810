@@ -198,7 +198,7 @@ class NaviControl():
       cluVanz = self.get_forword_car_speed( CS, CS.VSetDis )
       nDelta = cluVanz - CS.VSetDis
       if abs(nDelta) > 5:
-        clu_Vanz = cluVanz
+        ctrl_speed = cluVanz
         cruise_speed = True
 
     if cruise_speed:
