@@ -25,7 +25,7 @@ class NaviControl():
     self.target_speed = 0
     self.set_point = 0
     self.wait_timer2 = 0
-    self.wait_timer3 = 0
+
 
     self.moveAvg = mvAvg.MoveAvg()
 
@@ -126,19 +126,14 @@ class NaviControl():
 
     if self.lead_0.status:
       dRel = self.lead_0.dRel
-      vRel = self.lead_0.vRel
     else:
       dRel = 150
-      vRel = 0
 
-    dRelTarget = 110 #interp( CS.clu_Vanz, [30, 90], [ 30, 70 ] )
-    if dRel < dRelTarget and CS.clu_Vanz > 20:
-      dGap = interp( CS.clu_Vanz, [30, 40,  70], [ 20, 10, 5 ] )
-      cruise_set_speed_kph = CS.clu_Vanz + dGap
-    else:
-      self.wait_timer3 = 0
-
-    cruise_set_speed_kph = self.moveAvg.get_avg(cruise_set_speed_kph, 30)
+    dRelTarget = 60
+    if dRel < dRelTarget and CS.clu_Vanz > 60:
+      nVDelta = CS.VSetDis - CS.clu_Vanz
+      if nVDelta > 10:
+        cruise_set_speed_kph = CS.clu_Vanz + 5
     return  cruise_set_speed_kph
 
 
@@ -148,7 +143,7 @@ class NaviControl():
     self.liveNaviData = sm['liveNaviData']
     speedLimit = self.liveNaviData.speedLimit
     speedLimitDistance = self.liveNaviData.arrivalDistance  #speedLimitDistance
-    safetySign  = self.liveNaviData.safetySign
+    #safetySign  = self.liveNaviData.safetySign
     mapValid = self.liveNaviData.mapValid
     trafficType = self.liveNaviData.trafficType
     
@@ -181,7 +176,7 @@ class NaviControl():
       ctrl_speed = vFuture    
     elif CS.gasPressed:
       self.gasPressed_time += 1
-      if self.gasPressed_time > 50:
+      if self.gasPressed_time > 100:
         self.gasPressed_time = 0
         cruise_speed = True
     elif self.gasPressed_time:
@@ -198,8 +193,15 @@ class NaviControl():
         if ctrl_speed < 90:
           ctrl_speed = 90
 
+    clu_Vanz = CS.clu_Vanz
+    if CS.cruise_set_mode == 1:
+      cluVanz = self.get_forword_car_speed( CS, CS.VSetDis )
+      nDelta = cluVanz - CS.VSetDis
+      if abs(nDelta) > 5:
+        clu_Vanz = cluVanz
+        cruise_speed = True
+
     if cruise_speed:
-      clu_Vanz = CS.clu_Vanz  #* dRate
       ctrl_speed = max( ctrl_speed, clu_Vanz )
       CS.set_cruise_speed( ctrl_speed )  
 
