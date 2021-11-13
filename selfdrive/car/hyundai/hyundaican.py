@@ -95,13 +95,6 @@ def create_hda_mfc(packer, CS, c ):
   if c.hudControl.rightLaneVisible:
      ldwSysState += 2
 
-    #if CS.acc_mode:
-    #  hda_icon_state = 2
-    #elif enabled:
-    #  hda_icon_state = 1
-    #else:
-    #  hda_icon_state = 0
-
     #values["HDA_Icon_Wheel"] = 1 if enabled else 0
     #values["HDA_Icon_State"] = hda_icon_state
   values["HDA_LdwSysState"] = ldwSysState
