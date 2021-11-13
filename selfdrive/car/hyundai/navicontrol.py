@@ -130,7 +130,7 @@ class NaviControl():
       dRel = 150
 
     dRelTarget = 60
-    if dRel < dRelTarget and CS.clu_Vanz > 60:
+    if dRel < dRelTarget and CS.VSetDis > 60:
       nVDelta = CS.VSetDis - CS.clu_Vanz
       if nVDelta > 10:
         cruise_set_speed_kph = CS.clu_Vanz + 5
